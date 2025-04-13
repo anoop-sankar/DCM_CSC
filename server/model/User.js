@@ -14,6 +14,10 @@ const userSchema = new mongoose.Schema({
     type: String,
     default: 'user',
   },
+  dateOfJoining: {
+      type: Date,
+      required: true,
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('User', userSchema);

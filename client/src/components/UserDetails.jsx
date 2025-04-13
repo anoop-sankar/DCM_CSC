@@ -1,45 +1,35 @@
-import { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const UserDetails = ({ userId }) => {
-  const [user, setUser] = useState(null); // To store the user data
-  const [loading, setLoading] = useState(true); // To manage loading state
-  const [error, setError] = useState(null); // To handle errors
+const UserDetails = () => {
+  const { id } = useParams(); // Get ID from URL
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchUserDetails = async () => {
+    const fetchUser = async () => {
       try {
-        setLoading(true);
-        setError(null);
-        const res = await axios.get(`http://localhost:5000/api/users/${userId}`);
+        const res = await axios.get(`http://localhost:5000/api/users/${id}`);
         setUser(res.data);
       } catch (err) {
-        setError('Error fetching user details');
+        setError('Failed to load user');
       } finally {
         setLoading(false);
       }
     };
 
-    if (userId) {
-      fetchUserDetails();
-    }
-  }, [userId]); // Dependency array ensures effect runs when userId changes
+    fetchUser();
+  }, [id]);
 
-  if (loading) {
-    return <p>Loading user details...</p>;
-  }
-
-  if (error) {
-    return <p>{error}</p>;
-  }
-
-  if (!user) {
-    return <p>User not found</p>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>{error}</p>;
+  if (!user) return <p>User not found</p>;
 
   return (
     <div>
-      <h2>User Details</h2>
+      <h3>User Details</h3>
       <p><strong>Name:</strong> {user.name}</p>
       <p><strong>Email:</strong> {user.email}</p>
       <p><strong>Role:</strong> {user.role}</p>
